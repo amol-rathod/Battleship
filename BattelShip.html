@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Battle Ship Game By Amol</title>
+    <style>
+        body {
+            background-color: #e74c3c;
+            font-family: Arial, sans-serif;
+            color: black;
+            text-align: center;
+        }
+
+        h1 {
+            text-decoration: underline;
+            text-decoration-color: white;
+        }
+
+
+        .rules {
+            /* margin-left: 10%; */
+            color: black;
+            font-weight: 700;
+
+        }
+
+        #board {
+            display: grid;
+            grid-template-columns: repeat(4, 80px);
+            justify-content: center;
+            margin: 20px auto;
+        }
+
+        .cell {
+            width: 80px;
+            height: 80px;
+            background-color: #c0392b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: 2px solid white;
+            color: #3498db;
+        }
+
+        .cell.ship {
+            background-color: #c0392b;
+        }
+
+        #reset {
+            /* text-align: center; */
+            background-color: #c0392b;
+            color: #ffffff;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+            box-shadow: 5px 5px 10px hsla(207, 71%, 60%, 0.4);
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Battleship</h1>
+    <div class="rules">
+        <p>Game Rules:</p>
+        <ol>
+            <li>Click on the cells to reveal the image hidden behind them.</li>
+            <li>There are 5 ships hidden in the game.</li>
+            <li>You win if you can find all ships in less than 8 clicks, else you lose.</li>
+        </ol>
+    </div>
+    <div id="board"></div>
+    <button id="reset">Reset</button>
+
+    <script>
+        const board = document.getElementById('board');
+const resetButton = document.getElementById('reset');
+
+const boardSize = 4;
+const totalShips = 5;
+const maxClicks = 8;
+let shipsFound = 0;
+let clicks = 0;
+
+let generateShipPositions =()=> {
+    const positions = [];
+    while (positions.length < totalShips) {
+        const position = Math.floor(Math.random() * boardSize * boardSize);
+        if (!positions.includes(position)) {
+            positions.push(position);
+        }
+    }
+    console.log(positions)
+    return positions;
+}
+
+let Board =()=> {
+    board.textContent = '';
+    shipsFound = 0;
+    clicks = 0;
+
+    const shipPositions = generateShipPositions();
+
+    for (let i = 0; i < boardSize * boardSize; i++) {
+        const cell = document.createElement('div');
+        cell.classList.add('cell');
+        if (shipPositions.includes(i)) {
+            cell.classList.add('ship');
+        }
+        cell.addEventListener('click', () => {
+            if (!cell.classList.contains('revealed')) {
+                cell.classList.add('revealed');
+                clicks++;
+                let img1 = document.createElement('img');
+                let img2 = document.createElement('img');
+                img1.setAttribute('src', 'https://ucarecdn.com/88b392a4-eb2d-4b7c-aa8e-ae4a4ece891b/');
+                img2.setAttribute('src', 'https://ucarecdn.com/ec668e99-6be4-42f9-aa7c-6a92c049353c/');
+                img1.classList.add('cell');
+                img2.classList.add('cell');
+                if (clicks > 8) {
+                    return '';
+                }
+                else {
+                    if (cell.classList.contains('ship')) {
+                        shipsFound++;
+                        cell.appendChild(img2);
+                    } else {
+                        cell.appendChild(img1);
+                    }
+                    checkGameStatus();
+                }
+            }
+        });
+        board.appendChild(cell);
+
+    }
+}
+
+
+let checkGameStatus =()=> {
+    if (shipsFound === totalShips) {
+        return alert('You win!');
+    } else if (clicks >= maxClicks) {
+        alert('You lose!');
+    }
+}
+
+resetButton.addEventListener('click',Board);
+
+Board();
+</script>
+</body>
+
+</html>
